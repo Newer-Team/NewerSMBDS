@@ -22,7 +22,7 @@ Copyright (c) 2015-2017 Skawo, RoadrunnerWMC, RicBent
 - ndspy
 - devkitARM version 47 (available here: https://wii.leseratte10.de/devkitPro/devkitARM/r47%20(2017))
 - libnds version 1.7.2 (available here: https://wii.leseratte10.de/devkitPro/libnds/libnds_1.7.2%20(2018))
-- A North American New Super Mario Bros. DS rom (md5: 5407964FC9EBD01107EF00FB19A47513)
+- A North American New Super Mario Bros. DS rom (md5: a2ddba012e5c3c2096d0be57cc273be5)
 
 ## Installation
 
