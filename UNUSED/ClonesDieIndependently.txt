@@ -1,0 +1,112 @@
+nsub_021196BC_ov_0A:		# Pits
+	STMFD   SP!, {R0, R1}
+	MOV     R4, R0
+	LDR     R0, =PlayerCount
+	LDRB    R1, [R0]
+	CMP     R1, #0
+	SUBGT  	R1, #1
+	STRB    R1, [R0]
+	CMP     R1, #0
+	LDMEQFD SP!, {R0, R1}
+	BEQ     0x021196C0
+	BLNE    .Die
+	ADD     SP, SP, #0x10
+	LDMFD   SP!, {R4,PC}
+	
+nsub_02119B2C_ov_0A:		# Enemies
+	STMFD   SP!, {R0, R1}
+	MOV     R4, R0
+	LDR     R0, =PlayerCount
+	LDRB    R1, [R0]
+	CMP     R1, #0
+	SUBGT  	R1, #1
+	STRB    R1, [R0]
+	CMP     R1, #0
+	LDMEQFD SP!, {R0, R1}
+	BEQ     0x02119B30
+	BLNE    .Die
+	ADD     SP, SP, #0x10
+	LDMFD   SP!, {R4,PC}	
+	
+nsub_02119980_ov_0A:		# Lava
+	STMFD   SP!, {R0, R1}
+	MOV     R4, R0
+	LDR     R0, =PlayerCount
+	LDRB    R1, [R0]
+	CMP     R1, #0
+	SUBGT  	R1, #1
+	STRB    R1, [R0]
+	CMP     R1, #0
+	LDMEQFD SP!, {R0, R1}
+	BEQ     0x02119984
+	BLNE    .Die
+	LDMFD   SP!, {R4,PC}	
+	
+nsub_02119800_ov_0A:		# Poison Water
+	STMFD   SP!, {R0, R1}
+	MOV     R4, R0
+	LDR     R0, =PlayerCount
+	LDRB    R1, [R0]
+	CMP     R1, #0
+	SUBGT  	R1, #1
+	STRB    R1, [R0]
+	CMP     R1, #0
+	LDMEQFD SP!, {R0, R1}
+	BEQ     0x02119804
+	BLNE    .Die
+	LDMFD   SP!, {R4,PC}	
+
+.Die:					
+	STMFD   SP!, {LR}		# Try finding another player from beginning
+	MOV     R0, #0x15
+	MOV     R1, #0
+	BL      0x0204D66C
+	CMP     R0, R4		
+	MOVEQ   R0, #0x15		# If returned adress is the same as the dying one...
+	LDREQ   R1, [R4, #0x30]	# try to find one starting at the dying player	
+	BLEQ    0x0204D66C
+	CMP     R0, #0			# Safety measure to prevent crashing in case of error
+	BEQ     .JustInCase
+	MOV     R1, #0
+	BL		0x2020618		# Make it the current player
+.JustInCase:
+	CMP     R0, #0
+	LDR     R0, =338
+	MOV     R1, #0
+	BL      PlaySNDEffect	
+	LDR     R0, =22
+	ADD     R1, R4, #0x5C
+	BL      SpawnParticle
+	MOV     R0, R4
+	BL      Base__deleteIt
+	LDR     R0, =0x020CA880
+	MOV     R1, #0
+	STRB    R1, [R0]
+	LDMFD   SP!, {PC}
+
+nsub_020FF864_ov_0A:		# Add to player count when spawning a player
+	MOV     R4, R0
+	LDR     R0, =PlayerCount
+	LDR     R1, [R0]
+	ADD     R1, #1
+	STR     R1, [R0]
+	B       0x20FF868
+	
+nsub_020A3318_ov_00:		# Restore count to 0 when creating stage
+	MOV     R4, R0
+	LDR     R0, =PlayerCount	
+	MOV     R1, #0
+	STRB    R1, [R0]
+	MOV     R0, #1
+	B 		0x20A331C
+		
+nsub_0201F428_main:			# Fix reloading models
+	CMP 	R0, #0x15
+	BEQ 	0x201F440
+	LDR     R1, [R7]
+	B 	0x0201F42C
+
+.data
+.balign 4
+PlayerCount:
+	.word 0x0

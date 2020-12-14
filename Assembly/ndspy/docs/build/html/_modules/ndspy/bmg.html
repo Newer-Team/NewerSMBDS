@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ndspy.bmg &mdash; ndspy 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="ndspy 1.0.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> ndspy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../bmg.html">BMG (messages)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sdat_structure.html">Appendix: SDAT structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ndspy</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ndspy.bmg</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ndspy.bmg</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**BMG** files contain all of the text in a game that will be displayed to</span>
+<span class="sd">the player (apart from text embedded into images). Games contain one or</span>
+<span class="sd">more BMG files for each language they support, and will load the</span>
+<span class="sd">appropriate one depending on the console&#39;s language setting. Each</span>
+<span class="sd">&quot;message&quot; is referenced by index.</span>
+
+<span class="sd">Some BMG files -- namely, those used in the DS Zelda games -- can</span>
+<span class="sd">contain game flow scripts in addition to text. ndspy can read and save</span>
+<span class="sd">the file blocks that contain these scripts (*FLW1* and *FLI1*), but</span>
+<span class="sd">decoding and encoding the instructions themselves is out of its scope.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_common</span>
+
+
+<div class="viewcode-block" id="BMG"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.BMG">[docs]</a><span class="k">class</span> <span class="nc">BMG</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A BMG file.</span>
+
+<span class="sd">    :param data: The :py:class:`bytes` object to be read as BMG file</span>
+<span class="sd">        data. If this is missing or ``None``, the</span>
+<span class="sd">        :py:class:`BMG` object will initially be empty.</span>
+
+<span class="sd">    .. py:attribute:: messages</span>
+
+<span class="sd">        The list of :py:class:`Message`\ s in this BMG.</span>
+
+<span class="sd">        :type: :py:class:`list` of :py:class:`Message`</span>
+
+<span class="sd">    .. py:attribute:: instructions</span>
+
+<span class="sd">        The script instructions in this BMG, if it has a *FLW1* block.</span>
+<span class="sd">        Instructions will be :py:class:`bytes` objects by default, but</span>
+<span class="sd">        when saving, any object that implements a ``.save() -&gt; bytes``</span>
+<span class="sd">        method is acceptable in place of :py:class:`bytes`. (This is to</span>
+<span class="sd">        let you implement custom classes for instructions if you want</span>
+<span class="sd">        to.)</span>
+
+<span class="sd">        :type: :py:class:`list` of :py:class:`bytes` or objects</span>
+<span class="sd">            implementing ``.save() -&gt; bytes``</span>
+
+<span class="sd">    .. py:attribute:: labels</span>
+
+<span class="sd">        The script instruction labels in this BMG, if it has a *FLW1*</span>
+<span class="sd">        block.</span>
+
+<span class="sd">        :type: :py:class:`list` of ``(bmgID, instructionIndex)`` (both :py:class:`int`\ s)</span>
+
+<span class="sd">    .. py:attribute:: scripts</span>
+
+<span class="sd">        The starting instruction indices for each script ID defined in</span>
+<span class="sd">        this BMG, if it has a *FLI1* block.</span>
+
+<span class="sd">        :type: :py:class:`collections.OrderedDict`: ``{scriptID: instructionIndex}`` (both :py:class:`int`\ s)</span>
+
+<span class="sd">    .. py:attribute:: id</span>
+
+<span class="sd">        This BMG&#39;s ID number. In at least some games, every BMG has a</span>
+<span class="sd">        unique ID. This makes it possible to refer to specific messages</span>
+<span class="sd">        by specifying the desired BMG ID and the message index within</span>
+<span class="sd">        that BMG.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 0</span>
+
+<span class="sd">    .. py:attribute:: unk10</span>
+
+<span class="sd">        Unknown header value at 0x10.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 2</span>
+
+<span class="sd">    .. py:attribute:: unk14</span>
+
+<span class="sd">        Unknown header value at 0x14.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 0</span>
+
+<span class="sd">    .. py:attribute:: unk18</span>
+
+<span class="sd">        Unknown header value at 0x18.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 0</span>
+
+<span class="sd">    .. py:attribute:: unk1C</span>
+
+<span class="sd">        Unknown header value at 0x1C.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk10</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk14</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk18</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk1C</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initFromData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_initFromData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;MESGbmg1&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not a BMG file.&#39;</span><span class="p">)</span>
+
+        <span class="n">magic</span><span class="p">,</span> <span class="n">dataLen</span><span class="p">,</span> <span class="n">sectionCount</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unk10</span><span class="p">,</span> <span class="n">unk14</span><span class="p">,</span> <span class="n">unk18</span><span class="p">,</span> <span class="n">unk1C</span> <span class="o">=</span> \
+            <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;8s6I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">INF1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">def</span> <span class="nf">parseINF1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+            <span class="n">count</span><span class="p">,</span> <span class="n">entryLength</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;HHI&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">entryLength</span> <span class="o">==</span> <span class="mi">8</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+                <span class="n">entryOff</span><span class="p">,</span> <span class="n">entryAttribs</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;II&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+                <span class="n">INF1</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entryOff</span><span class="p">,</span> <span class="n">entryAttribs</span><span class="p">))</span>
+
+        <span class="n">DAT1</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+        <span class="k">def</span> <span class="nf">parseDAT1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">DAT1</span>
+            <span class="n">DAT1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">8</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">def</span> <span class="nf">parseFLW1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+            <span class="n">instructionsCount</span><span class="p">,</span> <span class="n">labelsCount</span><span class="p">,</span> <span class="n">unk0C</span> <span class="o">=</span> \
+                <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;HHI&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="c1"># unk0C is always 0, as far as I can tell</span>
+
+            <span class="n">instructionsTableOffset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">16</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">instructionsCount</span><span class="p">):</span>
+                <span class="n">instOff</span> <span class="o">=</span> <span class="n">instructionsTableOffset</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">instOff</span> <span class="p">:</span> <span class="n">instOff</span> <span class="o">+</span> <span class="mi">8</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">cmd</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\0\0\0\0\0\0\0\0</span><span class="s1">&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+            <span class="n">indicesTableOffset</span> <span class="o">=</span> <span class="n">instructionsTableOffset</span> <span class="o">+</span> <span class="n">instructionsCount</span> <span class="o">*</span> <span class="mi">8</span>
+            <span class="n">bmgIDsTableOffset</span> <span class="o">=</span> <span class="n">indicesTableOffset</span> <span class="o">+</span> <span class="n">labelsCount</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labelsCount</span><span class="p">):</span>
+                <span class="n">index</span><span class="p">,</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;h&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">indicesTableOffset</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">bmgID</span><span class="p">,</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;b&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">bmgIDsTableOffset</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">bmgID</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bmgID</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">def</span> <span class="nf">parseFLI1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+            <span class="n">count</span><span class="p">,</span> <span class="n">entryLength</span><span class="p">,</span> <span class="n">unk0C</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;HHI&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">entryLength</span> <span class="o">==</span> <span class="mi">8</span>
+            <span class="c1"># unk0C is always 0, as far as I can tell</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+                <span class="nb">id</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;IHxx&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="mh">0x20</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sectionCount</span><span class="p">):</span>
+            <span class="n">sectionMagic</span><span class="p">,</span> <span class="n">sectionLen</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&lt;4sI&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sectionMagic</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;INF1&#39;</span><span class="p">:</span>
+                <span class="n">parseINF1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sectionLen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">sectionMagic</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;DAT1&#39;</span><span class="p">:</span>
+                <span class="n">parseDAT1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sectionLen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">sectionMagic</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;FLW1&#39;</span><span class="p">:</span>
+                <span class="n">parseFLW1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sectionLen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">sectionMagic</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;FLI1&#39;</span><span class="p">:</span>
+                <span class="n">parseFLI1</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sectionLen</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown BMG section: &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">sectionMagic</span><span class="p">))</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="n">sectionLen</span>
+
+        <span class="c1"># Now we just need to read the messages.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">attribs</span> <span class="ow">in</span> <span class="n">INF1</span><span class="p">:</span>
+
+            <span class="c1"># The &quot;currentStringStart&quot; setup may seem needlessly</span>
+            <span class="c1"># confusing, but it&#39;s intended to keep the number of calls</span>
+            <span class="c1"># to bytes.decode() to a minimum. Based on my testing, it</span>
+            <span class="c1"># really does make the code run significantly faster.</span>
+
+            <span class="n">stringParts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">currentStringStart</span> <span class="o">=</span> <span class="n">offset</span>
+
+            <span class="n">nextBytes</span> <span class="o">=</span> <span class="n">DAT1</span><span class="p">[</span><span class="n">offset</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">while</span> <span class="n">nextBytes</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\0\0</span><span class="s1">&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nextBytes</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1A\x00</span><span class="s1">&#39;</span><span class="p">:</span> <span class="c1"># escape sequence</span>
+                    <span class="k">if</span> <span class="n">currentStringStart</span> <span class="ow">and</span> <span class="n">currentStringStart</span> <span class="o">!=</span> <span class="n">offset</span><span class="p">:</span>
+                        <span class="n">stringParts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DAT1</span><span class="p">[</span><span class="n">currentStringStart</span><span class="p">:</span><span class="n">offset</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-16le&#39;</span><span class="p">))</span>
+                    <span class="n">escapeLen</span><span class="p">,</span> <span class="n">escapeType</span> <span class="o">=</span> <span class="n">DAT1</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>
+                    <span class="n">escapeData</span> <span class="o">=</span> <span class="n">DAT1</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">4</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">escapeLen</span><span class="p">]</span>
+                    <span class="n">stringParts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="o">.</span><span class="n">Escape</span><span class="p">(</span><span class="n">escapeType</span><span class="p">,</span> <span class="n">escapeData</span><span class="p">))</span>
+                    <span class="n">offset</span> <span class="o">+=</span> <span class="n">escapeLen</span>
+                    <span class="n">currentStringStart</span> <span class="o">=</span> <span class="n">offset</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">+=</span> <span class="mi">2</span>
+
+                <span class="n">nextBytes</span> <span class="o">=</span> <span class="n">DAT1</span><span class="p">[</span><span class="n">offset</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">currentStringStart</span> <span class="ow">and</span> <span class="n">currentStringStart</span> <span class="o">!=</span> <span class="n">offset</span><span class="p">:</span>
+                <span class="n">stringParts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DAT1</span><span class="p">[</span><span class="n">currentStringStart</span><span class="p">:</span><span class="n">offset</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-16le&#39;</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="n">attribs</span><span class="p">,</span> <span class="n">stringParts</span><span class="p">,</span> <span class="n">offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="BMG.save"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.BMG.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate file data representing this BMG.</span>
+
+<span class="sd">        *FLW1* and *FLI1* sections will be created only if any</span>
+<span class="sd">        script instructions or scripts exist, respectively.</span>
+
+<span class="sd">        :returns: The BMG file data.</span>
+<span class="sd">        :rtype: :py:class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mh">0x20</span><span class="p">)</span>
+
+        <span class="n">instructionsCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">instructionsCount</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span> <span class="n">instructionsCount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">labelsCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">labelsCount</span> <span class="o">%</span> <span class="mi">8</span><span class="p">:</span> <span class="n">labelsCount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">numSections</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="p">:</span> <span class="n">numSections</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="p">:</span> <span class="n">numSections</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">INF1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">DAT1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># Starts with 2 null bytes for whatever reason</span>
+        <span class="n">FLW1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">FLI1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">isNull</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">DAT1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">8</span>
+            <span class="n">INF1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;II&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">info</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">isNull</span><span class="p">:</span>
+                <span class="n">DAT1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">save</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">inst</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">):</span>
+                <span class="n">inst</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Length of instruction </span><span class="si">{inst}</span><span class="s1"> is not 8 bytes!&#39;</span><span class="p">)</span>
+            <span class="n">FLW1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">FLW1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">16</span><span class="p">:</span> <span class="n">FLW1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">bmgID</span><span class="p">,</span> <span class="n">instIndex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="n">FLW1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;h&#39;</span><span class="p">,</span> <span class="n">instIndex</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labelsCount</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)):</span>
+            <span class="n">FLW1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\0\0</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bmgID</span><span class="p">,</span> <span class="n">instIndex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="n">FLW1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;b&#39;</span><span class="p">,</span> <span class="n">bmgID</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">startIndex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">FLI1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&lt;II&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">startIndex</span><span class="p">))</span>
+
+        <span class="c1"># Sections&#39; lengths must be 32-byte aligned</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">INF1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">32</span><span class="p">:</span> <span class="n">INF1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">DAT1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">32</span><span class="p">:</span> <span class="n">DAT1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">FLW1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">32</span><span class="p">:</span> <span class="n">FLW1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># FLI1&#39;s length isn&#39;t actually padded, but the length it claims</span>
+        <span class="c1"># in its header is. (I know. It&#39;s confusing.)</span>
+        <span class="n">FLI1len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">FLI1</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">FLI1len</span> <span class="o">%</span> <span class="mi">32</span><span class="p">:</span> <span class="n">FLI1len</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Pack section headers</span>
+        <span class="n">struct</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="s1">&#39;&lt;4sIHHI&#39;</span><span class="p">,</span> <span class="n">INF1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="sa">b</span><span class="s1">&#39;INF1&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">INF1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">struct</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="s1">&#39;&lt;4sI&#39;</span><span class="p">,</span> <span class="n">DAT1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;DAT1&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">DAT1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="p">:</span>
+            <span class="n">struct</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="s1">&#39;&lt;4sIHH&#39;</span><span class="p">,</span> <span class="n">FLW1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="sa">b</span><span class="s1">&#39;FLW1&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">FLW1</span><span class="p">),</span> <span class="n">instructionsCount</span><span class="p">,</span> <span class="n">labelsCount</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="p">:</span>
+            <span class="n">struct</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="s1">&#39;&lt;4sIHH&#39;</span><span class="p">,</span> <span class="n">FLI1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="sa">b</span><span class="s1">&#39;FLI1&#39;</span><span class="p">,</span> <span class="n">FLI1len</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="c1"># Insert the sections</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">INF1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">DAT1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">FLW1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">FLI1</span><span class="p">)</span>
+
+        <span class="c1"># Pack the BMG header</span>
+        <span class="n">totalLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">totalLen</span> <span class="o">%</span> <span class="mi">32</span><span class="p">:</span> <span class="n">totalLen</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">struct</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="s1">&#39;&lt;8s3I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;MESGbmg1&#39;</span><span class="p">,</span> <span class="n">totalLen</span><span class="p">,</span> <span class="n">numSections</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unk10</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A single message in a BMG file.</span>
+
+<span class="sd">    BMG messages are more than simple strings; they contain escape</span>
+<span class="sd">    sequences that can specify font formatting and allow text to be</span>
+<span class="sd">    inserted at runtime. For this reason, the message data is</span>
+<span class="sd">    represented as a list of strings and :py:class:`Escape`\ s instead</span>
+<span class="sd">    of as a string.</span>
+
+<span class="sd">    :param info: The initial value for the ``info`` attribute.</span>
+
+<span class="sd">    :param stringParts: The initial value of the ``stringParts``</span>
+<span class="sd">        attribute. If ``None``, ``stringParts`` will be initialized as</span>
+<span class="sd">        an empty list.</span>
+
+<span class="sd">    :param isNull: The initial value for the ``isNull`` attribute.</span>
+
+
+<span class="sd">    .. py:attribute:: info</span>
+
+<span class="sd">        A value representing message metadata, which comes from the</span>
+<span class="sd">        BMG&#39;s *INF1* block. The specific meaning of this value is</span>
+<span class="sd">        currently unclear.</span>
+
+<span class="sd">        :type: :py:class:`int`</span>
+<span class="sd">        :default: 0</span>
+
+<span class="sd">    .. py:attribute:: stringParts</span>
+
+<span class="sd">        A list of strings and escape sequences that together form the</span>
+<span class="sd">        message. Empty strings are allowed but discouraged.</span>
+
+<span class="sd">        :type: :py:class:`list` of :py:class:`str` and :py:class:`Escape`</span>
+
+<span class="sd">    .. py:attribute:: isNull</span>
+
+<span class="sd">        This is ``True`` if the message is null; that is, if its data</span>
+<span class="sd">        offset value in *INF1* is 0.</span>
+
+<span class="sd">        :type: :py:class:`bool`</span>
+<span class="sd">        :default: ``False``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Message.Escape"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.Message.Escape">[docs]</a>    <span class="k">class</span> <span class="nc">Escape</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An escape sequence within a BMG message.</span>
+
+<span class="sd">        Escape sequences have a type and optional parameter data.</span>
+<span class="sd">        Currently, the parameter data is left raw and unparsed; this may</span>
+<span class="sd">        change in the future.</span>
+
+<span class="sd">        :param type: The initial value for the ``type`` attribute.</span>
+
+<span class="sd">        :param data: The initial value of the ``data`` attribute.</span>
+
+
+<span class="sd">        .. py:attribute:: type</span>
+
+<span class="sd">            The type ID of this escape sequence.</span>
+
+<span class="sd">            :type: :py:class:`int`</span>
+<span class="sd">            :default: 0</span>
+
+<span class="sd">        .. py:attribute:: data</span>
+
+<span class="sd">            The raw data contained in this escape sequence.</span>
+
+<span class="sd">            :type: :py:class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+            <span class="c1"># Type = 4 is used for pluralization</span>
+            <span class="c1"># (and there&#39;s a couple parameters -- need to look into that)</span>
+
+<div class="viewcode-block" id="Message.Escape.save"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.Message.Escape.save">[docs]</a>        <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Generate binary data representing this escape sequence.</span>
+
+<span class="sd">            :returns: The escape sequence data.</span>
+<span class="sd">            :rtype: :py:class:`bytes`</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1A\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span></div>
+
+        <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;{type(self).__name__}(</span><span class="si">{self.type}</span><span class="s1">, </span><span class="si">{self.data!r}</span><span class="s1">)&#39;</span>
+
+        <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;[</span><span class="si">{self.type}</span><span class="s1">:{self.data.hex()}]&#39;</span></div>
+
+    <span class="n">info</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">stringParts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">isNull</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stringParts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">isNull</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stringParts</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">stringParts</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stringParts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isNull</span> <span class="o">=</span> <span class="n">isNull</span>
+
+<div class="viewcode-block" id="Message.save"><a class="viewcode-back" href="../../bmg.html#ndspy.bmg.Message.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate binary data representing this message.</span>
+
+<span class="sd">        :returns: The message data.</span>
+<span class="sd">        :rtype: :py:class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stringParts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-16le&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">save</span><span class="p">())</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\0\0</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;{type(self).__name__}({hex(self.info)}, </span><span class="si">{self.stringParts}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stringParts</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, RoadrunnerWMC.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# NDS Roms
+*.nds
+
+# Magigoomba
+cache/
+space-report.txt
+symbols.map

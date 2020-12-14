@@ -1,0 +1,80 @@
+@ Flimsy Lift
+repl_0217E084_ov_59:
+	LDR     R0, =0x4C4
+	BX      LR
+	
+repl_0217DDA0_ov_59:
+	MOV     R4, R0
+	MOV     R0, #0x20
+	STR     R0, [R4,#0x4C4]
+	MOV     R0, R4
+	BX		LR
+	
+repl_0217DEE0_ov_59:
+	MOV     R0, #0x20
+	STR   	R0, [R4,#0x4C4]
+	MOV     R0, #1
+	BX      LR
+	
+repl_0217DF20_ov_59:
+	LDR		R0, [R4, #8]
+	LSR 	R0, #8
+	ANDS 	R0, R0, #0xF
+	LDREQ   R1, =0x217FA48
+	BXEQ    LR
+
+	LDR     R0, [R4,#0x4C4]
+	CMP     R0, #0
+	LDREQ   R1, =0x217FA48
+	BXEQ    LR
+
+	SUB   	R0, #1
+	STR   	R0, [R4,#0x4C4]
+	ANDS    R0, #1
+	LDR     R1, [R4, #0x64]
+	ADDEQ   R1, #0x1200
+	SUBNE   R1, #0x1200
+	STR     R1, [R4, #0x64]
+	B       0x217DF34
+
+repl_0217DEA4_ov_59:
+	LDR		R0, [R4, #8]
+	LSR 	R0, #4
+	ANDS 	R0, R0, #0xF
+	MOVEQ 	R0, #0x4000
+	BXEQ 	LR
+	MOV 	R1, #0x500
+	MUL 	R0, R1
+	BX 		LR	
+
+	
+@ General:
+nsub_020DB4C0_ov_0A:
+	STMFD   SP!, {LR}
+	SUB     SP, SP, #4
+	LDR     R0, =0x596
+	MOV     R1, #0
+	BL      loadFileByExtId_3dModel
+	LDR     R0, =0x597
+	MOV     R1, #0
+	BL      loadFileByExtId_3dModel
+	MOV     R0, #1
+	ADD     SP, SP, #4
+	LDMFD   SP!, {PC}
+	
+nsub_020DB4A8_ov_0A:
+	LDR     R12, =0x20DB1B4
+	LDR		R1, [R0, #8]
+	LSR 	R1, #0xC
+	AND 	R1, R1, #0xF
+	CMP     R1, #0
+	LDREQ   R1, =0x596
+	
+	BEQ     .Load
+	CMP     R1, #1
+	LDREQ   R1, =0x597
+	BEQ     .Load
+
+.Load:	
+	ADD     R0, R0, #0x3F4
+	BX      R12

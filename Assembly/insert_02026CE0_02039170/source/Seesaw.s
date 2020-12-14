@@ -1,0 +1,10 @@
+repl_0217E830_ov_59:
+repl_0217E7F8_ov_59:
+	LDR R0, =0x2088BFC
+	LDR R0,[R0]
+	CMP R0,#0x6
+	LDRNE R0, =0x5D4
+	LDREQ R0, =0x900
+	ADDEQ R0, #0xA5
+	BX LR
+	

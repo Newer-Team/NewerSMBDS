@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ndspy &mdash; ndspy 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ndspy 1.0.0 documentation" href="#"/>
+        <link rel="next" title="BMG (messages)" href="bmg.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> ndspy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bmg.html">BMG (messages)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdat_structure.html">Appendix: SDAT structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">ndspy</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>ndspy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ndspy">
+<h1>ndspy<a class="headerlink" href="#ndspy" title="Permalink to this headline">¶</a></h1>
+<p><strong>ndspy</strong> is primarily a Python library that provides tools for reading, modifying and creating many common file formats used in Nintendo DS games. The APIs are designed to be low-level to allow for maximum control and flexibility. Accuracy is a key goal – whenever possible, loading and saving a file used in an official game should result in the original file data, byte-for-byte, even for highly complex file formats.</p>
+<p>ndspy also includes a set of simple tools that make use of the library. These let you use the library to convert between file formats without having to write any code of your own.</p>
+<p>If you plan to use ndspy for sound data and aren’t familiar with <em>SDAT</em> files, consider reading <a class="reference internal" href="sdat_structure.html"><span class="doc">the page explaining how they’re structured</span></a> first.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bmg.html">BMG (messages)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdat_structure.html">Appendix: SDAT structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#sdat-overall-container"><em>SDAT</em>: overall container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#swav-short-stream"><em>SWAV</em>: short stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#swar-folder-of-swavs"><em>SWAR</em>: folder of <em>SWAV</em>s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#sbnk-folder-of-instruments"><em>SBNK</em>: folder of instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#sseq-sequenced-music"><em>SSEQ</em>: sequenced music</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#ssar-sequenced-sound-effects"><em>SSAR</em>: sequenced sound effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#sequence-player-limits-for-sequences"><em>Sequence player</em>: limits for sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#strm-multi-channel-stream"><em>STRM</em>: multi-channel stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#stream-player-allowed-channels-for-streams"><em>Stream player</em>: allowed channels for streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdat_structure.html#group-group-of-items"><em>Group</em>: group of items</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h2>
+<p><strong>ndspy</strong> was written by <a class="reference external" href="https://github.com/RoadrunnerWMC/">RoadrunnerWMC</a>, using information from many, many sources. In alphabetical order:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://wiki.tockdom.com/">Custom Mario Kart Wiiki</a> – for information on the version of <em>BMG</em> files used in Wii games (which isn’t the same as the version of <em>BMG</em> used in DS games, but is similar)</li>
+<li><a class="reference external" href="http://archive.dshack.org/thread.php?tid=2590">DS Sound Studio</a> – for the meaning of sequence players and stream players</li>
+<li><a class="reference external" href="https://github.com/Barubary/dsdecmp">Source code for DSDecmp</a> (<a class="reference external" href="http://www.romhacking.net/utilities/789/">homepage</a>) – for code for several compression formats</li>
+<li><a class="reference external" href="http://www.dsibrew.org/">DSiBrew</a> – for some more info about the ROM file format</li>
+<li><a class="reference external" href="http://imrannazar.com/The-Smallest-NDS-File">Imran Nazar: The Smallest NDS File</a> – convenient quick reference for the ROM header format; also provided a nice test case for the ROM library code</li>
+<li><a class="reference external" href="https://sites.google.com/site/kiwids/sdat.html">kiwi.ds Nitro Composer File (*.sdat) Specification</a> – probably the best overall reference for <em>SDAT</em></li>
+<li><a class="reference external" href="http://www.romhacking.net/documents/[469]nds_formats.htm">Nintendo DS File Formats</a> – a terrific reference for a wide variety of format specifications</li>
+<li><a class="reference external" href="http://www.romhacking.net/utilities/826/">Source code for Nintendo DS/GBA Compressors by CUE</a> (<a class="reference external" href="https://gbatemp.net/threads/nintendo-ds-gba-compressors.313278/">thread</a>) – for code for reversed LZ compression (code compression)</li>
+<li><a class="reference external" href="https://github.com/Dirbaio/NSMB-Editor">Source code for NSMB Editor (NSMBe)</a> – for information and code for many formats</li>
+<li><a class="reference external" href="https://github.com/loveemu/loveemu-lab/tree/master/sseq2mid/src2">Source code for sseq2mid</a> – supports more types of sequence events than are documented in other references</li>
+<li><a class="reference external" href="https://github.com/pleonex/tinke">Source code for Tinke</a> – fills in the gaps in <em>SDAT</em> where the other references are ambiguous</li>
+<li>Some original research by me and <a class="reference external" href="https://www.youtube.com/user/skawo90">skawo</a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bmg.html" class="btn btn-neutral float-right" title="BMG (messages)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, RoadrunnerWMC.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

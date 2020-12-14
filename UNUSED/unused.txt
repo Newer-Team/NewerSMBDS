@@ -1,0 +1,117 @@
+repl_020A29F4_ov_00:					@If unk3 set to 1, don't freeze the game when entering
+	STMFD	SP!, {R0, R1,LR}
+	BL      getPtrToPlayerActor
+	LDR     R0, [R0, #0x2BE]
+	LSR     R0, #16
+	AND     R0, R0, #0xF
+	BL		MygetUnk3ForView
+	CMP     R0, #0x1
+	LDMFD	SP!, {R0, R1,LR}
+	STRNEB  R1, [R0]
+	BXNE    LR
+	CMP     R1, #0xC
+	STRNEB  R1, [R0]
+	BXNE    LR
+	LDR     R1, =0x020CACC0
+	LDRB    R1, [R1]
+	CMP     R1, #1
+	MOVNE   R1, #0xC
+	STRNEB  R1, [R0]
+	BXNE    LR
+	MOV		R1, #0
+	STRB  	R1, [R0]
+	BX      LR
+	
+repl_020A2A44_ov_00:
+	STMFD	SP!, {R0, R1,LR}
+	BL      getPtrToPlayerActor
+	LDR     R0, [R0, #0x2BE]
+	LSR     R0, #16
+	AND     R0, R0, #0xF
+	BL		MygetUnk3ForView
+	CMP     R0, #0x1
+	LDMFD	SP!, {R0, R1,LR}
+	STRNEB  R1, [R0]
+	BXNE    LR
+	CMP     R1, #0x2
+	STRNEB  R1, [R0]
+	BXNE    LR
+	MOV		R1, #0
+	STRB  	R1, [R0]
+	BX      LR
+	
+	
+repl_020FC498_ov_0A:					@If unk3 set to 1, don't freeze the game when exiting
+	STMFD	SP!, {R0, R1,LR}
+	BL      getPtrToPlayerActor
+	LDR     R0, [R0, #0x2BE]
+	ADD     R0, R1
+	LSR     R0, #16
+	AND     R0, R0, #0xF
+	BL		MygetUnk3ForView
+	CMP     R0, #0x1
+	LDMFD	SP!, {R0, R1,LR}	
+	MOVEQ   R3, #0
+	STREQB  R3, [R1]
+	BX      LR	    
+
+
+
+.JacketKoopas:
+LDR R0, =0x2088BFC
+LDR R0,[R0]
+CMP R0,#0x4
+LDR R1, =0x212EED4
+MOVEQ R2, #0x0		@todo
+MOVNE R2, #0x600
+ADDNE R2, #0x6D
+STREQH R2, [R1]
+BX LR
+
+.Octoombas:
+LDR R0, =0x2088BFC
+LDR R0,[R0]
+CMP R0,#0x5
+LDR R1, =0x212EE94
+MOVEQ R2, #0x0		@todo
+MOVNE R2, #0x600
+ADDNE R2, #0x6A
+STREQH R2, [R1]
+BX LR
+
+.HelmetKoopas:
+LDR R0, =0x2088BFC
+LDR R0,[R0]
+CMP R0,#0x5
+BNE .regular
+BXNE LR
+LDR R0, =0x02085A9C
+LDR R0,[R0]
+CMP R0,#0x2
+BEQ .regular
+BNE .helmet
+BX LR
+
+.regular:
+LDR R1, =0x212EED4
+MOV R2, #0x600
+ADD R2, #0xAD
+STRH R2, [R1]
+BX LR
+
+.helmet:
+LDR R1, =0x212EED4
+MOV R2, #0x0		@todo
+STRH R2, [R1]
+BX LR
+
+.TropicKoopas:
+LDR R0, =0x2088BFC
+LDR R0,[R0]
+CMP R0,#0x2
+LDR R1, =0x212EED4
+MOVEQ R2, #0x0		@todo
+MOVNE R2, #0x600
+ADDNE R2, #0x6D
+STREQH R2, [R1]
+BX LR

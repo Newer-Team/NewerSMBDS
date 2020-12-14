@@ -1,0 +1,50 @@
+#include "game.h"
+#include "sfx.h"
+
+bool ontile = false;
+int tiletimer = 0; 
+
+void hook_020FD1D8(MarioActor *athis)
+{	
+	if (tiletimer) tiletimer--;
+	
+	if ((athis->IsMarioGroundPounding77E & 0x2) == 0 && (pressedKeys & DOWN) == 0 && athis->currentMarioAnim != 0xD && athis->currentMarioAnim != 0xC)
+		{
+			u32 xPos = (athis->xPos>>12) / 16; u32 yPos = ((-athis->yPos)>>12) / 16;
+			int tb = getTileBehaviorAtPos2(xPos*16, yPos*16);
+			int tbN = (tb & 0xF0) >> 4;
+			
+			if (tbN == 0xF)
+			{
+				if (!ontile) 
+				{
+					PlaySNDEffect(SE_SYS_RED_RING, &athis->unk05C);
+					summonParticle(67, athis->xPos, athis->yPos, 0);
+					if ((athis->xVelocity > 0) && (athis->direction=1))  athis->direction = 0;
+					else if ((athis->xVelocity < 0) && (athis->direction=1)) athis->direction = 1;
+				}
+				ontile = true;
+				tiletimer = 50;
+			}
+			else ontile = false;
+			
+			if ((tiletimer>=30) && (tiletimer))
+				{
+					if (athis->xVelocity > 0) athis->xVelocity = 0x6000; 
+					else if (athis->xVelocity < 0) athis->xVelocity = -0x6000; 
+					else if (athis->xVelocity == 0) 
+					{
+						if (athis->direction & 1) athis->xVelocity = -0x6000; else athis->xVelocity = 0x6000; 
+					}
+					*((u32*)(((u32*)(athis->unk6BC))+3)) = 0x6000;
+					
+				}
+			if ((tiletimer<30) && (tiletimer))
+				{
+					if (athis->xVelocity > 0) athis->xVelocity-=0x100; 
+					else if (athis->xVelocity < 0) athis->xVelocity+=0x100; 
+					(*((u32*)(((u32*)(athis->unk6BC))+3))) -=0x100;
+				}
+		}
+	if (abs(athis->xVelocity) <= 0x3000) *((u32*)(((u32*)(athis->unk6BC))+3)) = 0x3000;
+}

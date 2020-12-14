@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BMG (messages) &mdash; ndspy 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ndspy 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="Appendix: SDAT structure" href="sdat_structure.html"/>
+        <link rel="prev" title="ndspy" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ndspy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BMG (messages)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdat_structure.html">Appendix: SDAT structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ndspy</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>BMG (messages)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/bmg.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ndspy.bmg">
+<span id="bmg-messages"></span><h1>BMG (messages)<a class="headerlink" href="#module-ndspy.bmg" title="Permalink to this headline">¶</a></h1>
+<p><strong>BMG</strong> files contain all of the text in a game that will be displayed to
+the player (apart from text embedded into images). Games contain one or
+more BMG files for each language they support, and will load the
+appropriate one depending on the console’s language setting. Each
+“message” is referenced by index.</p>
+<p>Some BMG files – namely, those used in the DS Zelda games – can
+contain game flow scripts in addition to text. ndspy can read and save
+the file blocks that contain these scripts (<em>FLW1</em> and <em>FLI1</em>), but
+decoding and encoding the instructions themselves is out of its scope.</p>
+<dl class="class">
+<dt id="ndspy.bmg.BMG">
+<em class="property">class </em><code class="descclassname">ndspy.bmg.</code><code class="descname">BMG</code><span class="sig-paren">(</span><em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#BMG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.BMG" title="Permalink to this definition">¶</a></dt>
+<dd><p>A BMG file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – The <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code> object to be read as BMG file
+data. If this is missing or <code class="docutils literal"><span class="pre">None</span></code>, the
+<a class="reference internal" href="#ndspy.bmg.BMG" title="ndspy.bmg.BMG"><code class="xref py py-class docutils literal"><span class="pre">BMG</span></code></a> object will initially be empty.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.messages">
+<code class="descname">messages</code><a class="headerlink" href="#ndspy.bmg.BMG.messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of <a class="reference internal" href="#ndspy.bmg.Message" title="ndspy.bmg.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a>s in this BMG.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code> of <a class="reference internal" href="#ndspy.bmg.Message" title="ndspy.bmg.Message"><code class="xref py py-class docutils literal"><span class="pre">Message</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.instructions">
+<code class="descname">instructions</code><a class="headerlink" href="#ndspy.bmg.BMG.instructions" title="Permalink to this definition">¶</a></dt>
+<dd><p>The script instructions in this BMG, if it has a <em>FLW1</em> block.
+Instructions will be <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code> objects by default, but
+when saving, any object that implements a <code class="docutils literal"><span class="pre">.save()</span> <span class="pre">-&gt;</span> <span class="pre">bytes</span></code>
+method is acceptable in place of <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code>. (This is to
+let you implement custom classes for instructions if you want
+to.)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code> or objects
+implementing <code class="docutils literal"><span class="pre">.save()</span> <span class="pre">-&gt;</span> <span class="pre">bytes</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.labels">
+<code class="descname">labels</code><a class="headerlink" href="#ndspy.bmg.BMG.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>The script instruction labels in this BMG, if it has a <em>FLW1</em>
+block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code> of <code class="docutils literal"><span class="pre">(bmgID,</span> <span class="pre">instructionIndex)</span></code> (both <code class="xref py py-class docutils literal"><span class="pre">int</span></code>s)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.scripts">
+<code class="descname">scripts</code><a class="headerlink" href="#ndspy.bmg.BMG.scripts" title="Permalink to this definition">¶</a></dt>
+<dd><p>The starting instruction indices for each script ID defined in
+this BMG, if it has a <em>FLI1</em> block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code>: <code class="docutils literal"><span class="pre">{scriptID:</span> <span class="pre">instructionIndex}</span></code> (both <code class="xref py py-class docutils literal"><span class="pre">int</span></code>s)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.id">
+<code class="descname">id</code><a class="headerlink" href="#ndspy.bmg.BMG.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>This BMG’s ID number. In at least some games, every BMG has a
+unique ID. This makes it possible to refer to specific messages
+by specifying the desired BMG ID and the message index within
+that BMG.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.unk10">
+<code class="descname">unk10</code><a class="headerlink" href="#ndspy.bmg.BMG.unk10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unknown header value at 0x10.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">2</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.unk14">
+<code class="descname">unk14</code><a class="headerlink" href="#ndspy.bmg.BMG.unk14" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unknown header value at 0x14.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.unk18">
+<code class="descname">unk18</code><a class="headerlink" href="#ndspy.bmg.BMG.unk18" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unknown header value at 0x18.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.BMG.unk1C">
+<code class="descname">unk1C</code><a class="headerlink" href="#ndspy.bmg.BMG.unk1C" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unknown header value at 0x1C.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndspy.bmg.BMG.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#BMG.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.BMG.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate file data representing this BMG.</p>
+<p><em>FLW1</em> and <em>FLI1</em> sections will be created only if any
+script instructions or scripts exist, respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The BMG file data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ndspy.bmg.Message">
+<em class="property">class </em><code class="descclassname">ndspy.bmg.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>info=0</em>, <em>stringParts=None</em>, <em>isNull=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single message in a BMG file.</p>
+<p>BMG messages are more than simple strings; they contain escape
+sequences that can specify font formatting and allow text to be
+inserted at runtime. For this reason, the message data is
+represented as a list of strings and <a class="reference internal" href="#ndspy.bmg.Message.Escape" title="ndspy.bmg.Message.Escape"><code class="xref py py-class docutils literal"><span class="pre">Escape</span></code></a>s instead
+of as a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>info</strong> – The initial value for the <code class="docutils literal"><span class="pre">info</span></code> attribute.</li>
+<li><strong>stringParts</strong> – The initial value of the <code class="docutils literal"><span class="pre">stringParts</span></code>
+attribute. If <code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">stringParts</span></code> will be initialized as
+an empty list.</li>
+<li><strong>isNull</strong> – The initial value for the <code class="docutils literal"><span class="pre">isNull</span></code> attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="ndspy.bmg.Message.info">
+<code class="descname">info</code><a class="headerlink" href="#ndspy.bmg.Message.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>A value representing message metadata, which comes from the
+BMG’s <em>INF1</em> block. The specific meaning of this value is
+currently unclear.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.Message.stringParts">
+<code class="descname">stringParts</code><a class="headerlink" href="#ndspy.bmg.Message.stringParts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of strings and escape sequences that together form the
+message. Empty strings are allowed but discouraged.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal"><span class="pre">str</span></code> and <a class="reference internal" href="#ndspy.bmg.Message.Escape" title="ndspy.bmg.Message.Escape"><code class="xref py py-class docutils literal"><span class="pre">Escape</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.Message.isNull">
+<code class="descname">isNull</code><a class="headerlink" href="#ndspy.bmg.Message.isNull" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is <code class="docutils literal"><span class="pre">True</span></code> if the message is null; that is, if its data
+offset value in <em>INF1</em> is 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bool</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body"><code class="docutils literal"><span class="pre">False</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ndspy.bmg.Message.Escape">
+<em class="property">class </em><code class="descname">Escape</code><span class="sig-paren">(</span><em>type=0</em>, <em>data=b''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#Message.Escape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.Message.Escape" title="Permalink to this definition">¶</a></dt>
+<dd><p>An escape sequence within a BMG message.</p>
+<p>Escape sequences have a type and optional parameter data.
+Currently, the parameter data is left raw and unparsed; this may
+change in the future.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>type</strong> – The initial value for the <code class="docutils literal"><span class="pre">type</span></code> attribute.</li>
+<li><strong>data</strong> – The initial value of the <code class="docutils literal"><span class="pre">data</span></code> attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="ndspy.bmg.Message.Escape.type">
+<code class="descname">type</code><a class="headerlink" href="#ndspy.bmg.Message.Escape.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type ID of this escape sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Default:</th><td class="field-body">0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ndspy.bmg.Message.Escape.data">
+<code class="descname">data</code><a class="headerlink" href="#ndspy.bmg.Message.Escape.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The raw data contained in this escape sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ndspy.bmg.Message.Escape.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#Message.Escape.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.Message.Escape.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate binary data representing this escape sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The escape sequence data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ndspy.bmg.Message.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ndspy/bmg.html#Message.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ndspy.bmg.Message.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate binary data representing this message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The message data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sdat_structure.html" class="btn btn-neutral float-right" title="Appendix: SDAT structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="ndspy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, RoadrunnerWMC.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

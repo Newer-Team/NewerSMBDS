@@ -1,0 +1,73 @@
+#include "game.h"
+#include "BootDisplay.h"
+#include "VariousFunctions.h"
+
+u32 BGDat_Filesize;
+u32 Jyotyu_unt_Filesize;
+u32 Jyotyu_unt_HD_Filesize;
+u32 Tileset_unt_Filesize;
+u32 Tileset_unt_HD_Filesize;
+
+u32 GetFSFileSize(u32* File)
+	{
+		u32* Top = File + 0xA;
+		u32* Bottom = File + 0x9;
+		return *Top - *Bottom;
+	}
+
+void GetFilesizesOfLevelFiles()
+	{
+		FSFile File;
+		
+		u32* AreaNum = (u32*)0x2085A94;
+		u32* BGDatFileIDTable = (u32*)0x203C960;
+		u32* TS_UNT_HD_Table = (u32*)0x20C7FC4;
+		u32* TS_UNT_Table = (u32*)0x20C80F4;
+		u32* Tileset1Num = (u32*)0x20CACBC;
+		
+		int BGDatFileNum = *(BGDatFileIDTable + ((*AreaNum << 2) / 4)) + 0x83;
+		int TS_UNT_HD_Num = *(TS_UNT_HD_Table + ((*Tileset1Num << 2) / 4)) + 0x83;
+		int TS_UNT_Num = *(TS_UNT_Table + ((*Tileset1Num << 2) / 4)) + 0x83;
+		int Jyotyu_unt = 730;
+		int Jyotyu_unt_HD = 731;
+		
+		FS_InitFile(&File);
+		FS_OpenFileFast(&File, 0x02096114, BGDatFileNum);
+		BGDat_Filesize = GetFSFileSize((u32*)File);
+		FS_CloseFile(&File);
+		
+		FS_InitFile(&File);
+		FS_OpenFileFast(&File, 0x02096114, Jyotyu_unt);
+		Jyotyu_unt_Filesize = GetFSFileSize((u32*)File);		
+		FS_CloseFile(&File);
+		
+		FS_InitFile(&File);
+		FS_OpenFileFast(&File, 0x02096114, Jyotyu_unt_HD);
+		Jyotyu_unt_HD_Filesize = GetFSFileSize((u32*)File);	
+		FS_CloseFile(&File);
+		
+		// If in credits area, alloc more space so we can switch the tilesets.
+		if (*AreaNum == 0x8C)
+		{
+			Tileset_unt_Filesize = 0x4000;
+			Tileset_unt_HD_Filesize = 0x1000;
+		}
+		else
+		{
+			FS_InitFile(&File);
+			FS_OpenFileFast(&File, 0x02096114, TS_UNT_Num);
+			Tileset_unt_Filesize = GetFSFileSize((u32*)File);	
+			FS_CloseFile(&File);
+			
+			FS_InitFile(&File);
+			FS_OpenFileFast(&File, 0x02096114, TS_UNT_HD_Num);
+			Tileset_unt_HD_Filesize = GetFSFileSize((u32*)File);		
+			FS_CloseFile(&File);
+		}
+		return;
+	}
+	
+void hook_020B03E4_ov_00()
+	{
+		GetFilesizesOfLevelFiles();
+	}

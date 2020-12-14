@@ -1,0 +1,299 @@
+repl_02153188_ov_36:		@Reset angle stack and store midpoint
+	LDR     R3, [R0]
+	STMFD	SP!, {R0,R1,LR}
+	LDR 	R0, =XAngle
+	MOVEQ   R1, #0
+	STRH    R1, [R0]
+	BL		getStartingFromMidway
+	LDR     R1, =MidwayStack
+	STRB	R0, [R1]
+	LDMFD	SP!, {R0,R1,PC}
+
+repl_02153244_ov_36:		@If not starting from midway and retextured, set to texture 0
+	MOV R5, R4
+	STMFD	SP!, {R0,R1,LR}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0	
+	LDMEQFD	SP!, {R0,R1,PC}
+	BL		getStartingFromMidway
+	LDR     R1, =MidwayStack
+	CMP		R0, #0x1
+	LDMEQFD	SP!, {R0,R1,PC}
+	MOV     R1, #0
+	MOV     R0, R4
+	ADD     R0, #0x400
+	ADD     R0, #0x34
+	STRB    R1, [R0]
+	LDMFD	SP!, {R0,R1,PC}
+
+	
+repl_02153408_ov_36:		@Use the model if nybble set
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #1
+	LDREQ   R0, =0x900
+	ADDEQ   R0, R0, #0xA4
+	LDRNE   R0, =0x5A5
+	BX 	LR
+	
+repl_021530DC_ov_36:		@Disable setting of angle
+	STMFD	SP!, {R0,R1}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0,R1}
+	BXNE    LR
+	BEQ     0x2044888
+	BX      LR
+
+repl_02153828_ov_36:		@Disable spinning, set angle if nybble set
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	MOVEQ   R0, R4
+	ADDEQ   R3, R3, #0x400
+	BXEQ	LR
+	STMFD	SP!, {R0,R1}
+	LDR 	R0, [R4, #8]
+	LSR		R0, R0,#24
+	AND 	R0, R0, #0xFF
+	LDR     R1, =StartingAngle
+	STRB    R0, [R1]
+	STRB    R0, [R4, #0xA5]
+	LDMFD	SP!, {R0,R1}
+	MOV     R0, R4
+	BL      0x02153830
+	
+repl_0215322C_ov_36:		@Set start angle
+	MOV     R6, #0
+	STMFD	SP!, {R0,R1,LR}
+	LDR 	R0, [R4, #8]
+	LSR		R0, R0,#24
+	AND 	R0, R0, #0xFF
+	STRB    R0, [R4, #0xA5]
+	LDMFD	SP!, {R0,R1,PC}
+	
+repl_02153220_ov_36:		@Set Z order to low if nybble set
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	MOVNE 	R0, #0
+	MOVEQ 	R0, #0x100000
+	BX   LR
+	
+repl_021536EC_ov_36:		@Don't add points if starting from midpoint	and nybble set
+	STMFD	SP!, {R0,R1}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0,R1}
+	BEQ    	0x209AB90
+	BXEQ    LR
+	STMFD	SP!, {R0,R1}
+	LDR     R0, =MidwayStack
+	LDRB    R0, [R0]
+	CMP		R0, #0x0
+	LDMFD	SP!, {R0,R1}
+	BEQ    	0x209AB90
+	BX      LR
+	
+repl_021536B8_ov_36:		@Change sound
+	STMFD	SP!, {R0,R1}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0,R1}
+	LDREQ   R0, =0x17F
+	LDRNE   R0, =0x13A
+	BX LR
+	
+repl_021536C0_ov_36:		@Don't play sounds if starting from midpoint and nybble set	
+	STMFD	SP!, {R0,R1}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0,R1}
+	BEQ    	0x2012398
+	BXEQ    LR
+	STMFD	SP!, {R0,R1}
+	LDR     R0, =MidwayStack
+	LDRB    R0, [R0]
+	CMP		R0, #0x0
+	LDMFD	SP!, {R0,R1}
+	BEQ    	0x2012398
+	BX      LR	
+	
+repl_021536C4_ov_36:		@Spawn particles when collected if nybble set
+	MOV     R0, #0xC
+	STMFD	SP!, {R0,R1}
+	LDR     R0, =MidwayStack
+	LDRB    R0, [R0]
+	CMP		R0, #0x0
+	LDMFD	SP!, {R0,R1}
+	BXNE    LR
+	STMFD	SP!, {R0-R4,LR}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #1
+	LDMNEFD	SP!, {R0-R4,PC}
+	SUB     SP, SP, #0x1C
+	LDR     R0, =0x02039208
+	ADD     R1, SP, #8
+	STR     R0, [SP,#8]
+	LDR     R2, [R4,#0x60]
+	ADD     R2, R2, #4000
+	MOV     R0, #0x41
+	STR     R2, [SP,#0xC]
+	LDR     R2, [R4,#0x64]
+	ADD     R2, R2, #122880
+	ADD     R2, R2, #4000
+	STR     R2, [SP,#0x10] 
+	LDR     R2, [R4,#0x68]   
+	STR     R2, [SP,#0x14]
+	BL 		0x02022B64
+	ADD     SP, SP, #0x1C
+	LDMFD	SP!, {R0-R4,PC}
+	
+repl_02153110_ov_36:		@Set texture to 3 if Luigi is the player
+	LDRH R0, [R4, #0xC] 
+	CMP R0, #0x97 
+	BNE .Return
+	LDR		R0, =CharacterSet
+	LDRB 	R0, [R0]
+	CMP		R0, #1
+	MOVEQ 	R0, #3
+	MOVNE 	R0, #0
+	LDR		R1, =TextureStack
+	STRB	R0, [R1]
+	.Return:
+	ADD		R0, R4, #0x3F4
+	BX		LR
+	
+repl_02153124_ov_36: 
+	MOV R0, #0 
+	LDR R1, =TextureStack 
+	STRB R0, [R1] 
+	LDR R1, =0x20391F8 
+	BX LR
+
+repl_0205A6E0:
+	LDR		R4, =TextureStack
+	LDRB	R5, [R4]
+	CMP		R5, #0
+	BEQ		.Return2
+	SUB		R2, R5, #1
+	MOV		R5, #0
+	STRB	R5, [R4]
+.Return2:
+	ADD	R0, R3, R2, LSL #2
+	BX	LR
+	
+repl_0215352C_ov_36:		@Always shake when nybble set
+	STMFD	SP!, {R0}
+	LDR 	R0, [R5, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0}
+	LDREQB  R1, [R0,#0x3E4]
+	MOVNE   R1, #1
+	BX LR
+	
+repl_02153540_ov_36:		@Shake instead of spinning away when collected
+	BXMI	LR
+	STMFD	SP!, {R0}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0}
+	BEQ     0x2153554
+	STMFD	SP!, {R0,R1}
+	LDR     R0, =MidwayStack
+	LDRB    R0, [R0]
+	CMP		R0, #0x0
+	LDMFD	SP!, {R0,R1}
+	BEQ  	.MidpointTouched
+	BL   	0x21535B8	
+	
+.MidpointTouched:
+	STMFD	SP!, {R0,R1}
+	LDR     R0, =MidwayStack
+	LDRB    R0, [R0]
+	CMP		R0, #0x0
+	LDMFD	SP!, {R0,R1}
+	BLNE 	0x21535B8
+	LDR 	R0, =XAngle
+	LDRH 	R0,[R0]
+	CMP     R0, #0xFF00
+	LDRGE   R0, =StartingAngle
+	LDRGEB  R0, [R0]
+	LSLGE   R0, #8
+	STRGEH  R0, [R4,#0xA4]
+	BLGE 	0x21535B8
+	ADDLT   R0, R0, #0x400
+	LDR 	R1, =XAngle
+	STRH    R0, [R1]
+	LSL     R0, #1
+	BL      .sin		@Shake
+	LSR     R0, #1
+	LDR     R1, =StartingAngle
+	LDRB    R1, [R1]
+	LSL     R1, #8
+	ADD     R0, R0, R1
+	STRH    r0, [R4,#0xA4]
+	MOV  	R1, #1
+	MOV     R0, R4
+	ADD     R0, #0x400
+	ADD     R0, #0x34
+	STRB    R1, [R0]
+	LDR		R0, =0x2085A50
+	LDRB 	R0, [R0]
+	LDR  	R1, =CharacterSet
+	STRB    R0, [R1]
+	BL 		0x21535B8	
+	
+.sin:
+    MOV     R0, R0, lsl #(30-13)          
+    TEQ     R0, R0, lsl #1
+    RSBMI   r0, r0, #1<<31
+    SMULWT  R1, R0, R0              
+	MOV     R2, #3<<13            
+    SUB     R1, R2, R1, asr #15    
+    SMULWT  R0, R1, R0              
+    BX      LR
+	
+
+repl_021534E8_ov_36:		@Don't set the collected variable if nybble set
+	STMFD	SP!, {R0}
+	LDR 	R0, [R5, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0}
+	MOVEQ  	R1, #1
+	STREQB  R1, [R0,#0x3E4]
+	BX LR
+	
+	
+repl_021536B4_ov_36:		@Don't set the delete flag if nybble set
+	STMFD	SP!, {R0,LR}
+	LDR 	R0, [R4, #8]
+	AND 	R0, R0, #0xF
+	CMP 	R0, #0
+	LDMFD	SP!, {R0,LR}
+	BEQ     0x020CDB80
+	BX      LR
+	
+	
+.data
+.balign 4
+	XAngle:
+		.hword 0x0000
+.balign 4
+	TextureStack:
+		.byte 0x00	
+	MidwayStack:
+		.byte 0x00
+	StartingAngle:
+		.byte 0x00
+	CharacterSet:
+		.byte 0x00
