@@ -9,6 +9,8 @@ in hopes of cleaning it up. Never works. It's a trap.
 But, well, here it is. This is all the custom code that made
 it into the game, plus some extras that did not.
 
+Please excuse the formatting of the code; we haven't had time to fix it properly yet.
+
 ### Licensing
 
 The Newer DS source code and tools are released under the GPLv3 license.
