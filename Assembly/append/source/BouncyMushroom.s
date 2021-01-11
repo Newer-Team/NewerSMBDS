@@ -19,3 +19,8 @@ nsub_0217E3B8_ov_5A:
 	MOV     R0, #1
 	ADD     SP, SP, #4
 	LDMFD   SP!, {PC}	
+    
+# Instead of checking if A button is pressed, check if it's held.
+nsub_021836B8_ov_5A:
+    BL 0x212C630
+    B 0x021836BC
