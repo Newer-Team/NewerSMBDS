@@ -37,3 +37,18 @@ repl_02005EC4:
 crashDumpLabel:
   .ascii "NewerDS v" GAME_VERSION " Crash Dump"
   
+  
+nsub_02008058:
+	LDRB    R0, [R7,#0x5BC]
+	TST     R0, #2
+	BEQ     .return
+
+	LDR     R0, =0x4001050
+	MOV     R1, #63
+	MOV     R2, #0
+	BL      0x020622EC
+
+.return:
+	LDRB    R0, [R7,#0x5BC]
+	AND     R0, R0, #1
+	B       0x0200805C

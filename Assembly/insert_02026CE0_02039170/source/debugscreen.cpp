@@ -21,6 +21,9 @@ int pos = 4;
 
 void debugMenu()
 {	
+    setBackdropColor(0x6970);
+    setBackdropColorSub(0x6970);
+
 	u16** topScreenPtr = (u16**) 0x020859EC;
 	u16** subScreenPtr = (u16**) 0x020859E8;	
 	
