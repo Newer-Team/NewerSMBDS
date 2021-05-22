@@ -83,6 +83,7 @@ void InitCRSIN()
         ThisCRSIN->StateJustChanged = true;
         ThisCRSIN->DoingBannerDrop = true;
         ThisCRSIN->FirstTimeInWaitState = true;
+		ThisCRSIN->SecretPressedSelects = 0;
         
         NNSi_SndArcLoadGroup(0x9, *((u32**)(0x208FBB8)));
 
