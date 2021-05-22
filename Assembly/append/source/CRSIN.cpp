@@ -24,6 +24,9 @@ const int BANNER_HEIGHT = 64;
 const int BANNER_OVERSHOOT = 8;
 const int CHAR_WIDTHS[10] = {12, 12, 14, 14, 14, 14, 14, 14, 14, 14};
 
+extern u8 MidwayPointSecond;
+extern s8 MidwayAreaSecond;
+
 const u32 SLIDE_IN_LERP_TABLE[33] = {0, 305473868, 596227857, 872714849, 1135373792, 1384630133, 1620896225, 1844571736, 2056044038, 2255688584, 2443869276, 2620938819, 2787239068, 2943101359, 3088846834, 3224786755, 3351222807, 3468447393, 3576743921, 3676387078, 3767643099, 3850770031, 3926017979, 3993629354, 4053839108, 4106874965, 4152957643, 4192301069, 4225112588, 4251593166, 4271937584, 4286334633, 4294967295};
 
 extern int TitleScrNumber;
@@ -82,7 +85,7 @@ void InitCRSIN()
         ThisCRSIN->FirstTimeInWaitState = true;
         
         NNSi_SndArcLoadGroup(0x9, *((u32**)(0x208FBB8)));
-        
+
         SwapASwar(40, 2845-0x83);
         SwapASbnk(39, 2846-0x83);
         SwapASsar(29, 2847-0x83);
@@ -323,6 +326,7 @@ void CRSIN_UpdateBannerDrop()
     }
 
 
+
 void CRSIN_Wait()
     {
         if (ThisCRSIN->StateJustChanged)
@@ -346,10 +350,29 @@ void CRSIN_Wait()
 
         // Make the banner-drop animation happen
         CRSIN_UpdateBannerDrop();
-
+		
         // If select is pressed, switch to Selection state
         if (!ThisCRSIN->CRSINHeld && pressedKeys & SELECT)
             {
+				ThisCRSIN->SecretPressedSelects++;
+				
+				// Dumb secret!
+				if (ThisCRSIN->SecretPressedSelects == 15)
+				{
+					int *world = (int*)(0x02088BFC);
+					int *level = (int*)(0x02085A9C);
+					
+					if (*world == 7 && *level == 4)
+					{
+						PlaySNDEffect(SE_PLY_GLIDING, 0);
+						*world = 8;
+						*level = 11;
+						MidwayPointSecond = 0;
+						MidwayAreaSecond = 0x8F;
+					}
+				}
+				
+				
                 ThisCRSIN->CRSINHeld = true;
                 ThisCRSIN->State = 3;
                 ThisCRSIN->StateJustChanged = true;
@@ -366,7 +389,8 @@ void CRSIN_Wait()
                 else
                     {
                         copyVRAMTile(BG_GFX, BG_GFX, 8, 8, 20, 129, 128, 217);
-                        PlaySNDEffect(SE_PLY_CANNON_BACK_SHOT, 0);
+						
+						PlaySNDEffect(SE_PLY_CANNON_BACK_SHOT, 0);
                     }
                 ThisCRSIN->SelectBlinkIsBig = !ThisCRSIN->SelectBlinkIsBig;
                 ThisCRSIN->SelectBlinkTimer = SELECT_PROMPT_BLINK_DURATION;

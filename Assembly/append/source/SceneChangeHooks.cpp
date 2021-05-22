@@ -18,8 +18,9 @@ extern bool TouchscrControlLock;
 extern int TitleScrNumber;
 #define scene35Flag (*((u32*)0x02085A20))
 
-const u8 TSCLevels[8] = {0, 0, 0, 0, 0, 5, 1, 7};
-const u8 TSCAreas[8] = {0, 1, 0, 0, 0, 0, 0, 0};
+const u8 TSCWorlds[8] = {7, 1, 2, 3, 4, 5, 6, 7};
+const u8 TSCLevels[8] = {1, 0, 0, 0, 0, 5, 1, 7};
+const u8 TSCAreas[8] = {2, 1, 0, 0, 0, 0, 0, 0};
 
 void hook_02013238()
 	{		
@@ -46,7 +47,7 @@ void hook_02013238()
 				IsSpecialLevel = true;
 				ControlLock = true;
 				
-				loadLevel(0xD, false, world, TSCLevels[world], TSCAreas[world], 0, 1, 0, 1, 1, 0xC, 1);
+				loadLevel(0xD, false, TSCWorlds[world], TSCLevels[world], TSCAreas[world], 0, 1, 0, 1, 1, 0xC, 1);
 				scene35Flag = 2;
 			}
 
