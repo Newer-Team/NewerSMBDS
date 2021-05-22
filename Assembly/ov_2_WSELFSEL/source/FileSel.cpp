@@ -117,7 +117,24 @@ void SetSaveInfo(int slot, SaveFileInfo* Info)
  
 void ScrollTopScreenBottomLayer()
     {
-        bgScrollf(7, 32, 0);
+		//WiiU doesn't support scrolling backgrounds this way, so we have to do it manually.
+		ThisFSEL->ScrollTimer++;
+		
+		if (ThisFSEL->ScrollTimer % 5 == 0)
+		{
+			for (int j = 0; j < 255; j++)
+				{
+					u16 leftmost = ((u16*)BG_GFX_SUB)[j * 128];
+					
+					for (int i = 0; i < 127; i++)
+						((u16*)BG_GFX_SUB)[j * 128 + i] = ((u16*)BG_GFX_SUB)[j * 128 + i + 1];
+					
+					((u16*)BG_GFX_SUB)[j * 128 + 127] = leftmost;
+				}
+		}
+		
+	
+        //bgScrollf(7, 32, 0);
         bgUpdate();
     }
  

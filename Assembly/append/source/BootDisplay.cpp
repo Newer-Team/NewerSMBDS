@@ -21,7 +21,7 @@ s64 CrashHachiHachi()
 
 void BootScreenCredit()
 	{	
-		CrashHachiHachi();
+		//CrashHachiHachi();
 		SetLastSaveSlot();
 
 		for (s8 brightness = 0; brightness >= -32; brightness--) 

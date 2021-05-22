@@ -397,9 +397,14 @@ bool MinecartCommon_InitiateJump(GenericMinecartInfo* info,
                                 int segmentLength = sqrt32(dx * dx + dy * dy);
 
                                 // Use that to set our current x/y speed
-                                s64 temp = dx; temp *= info->speed; temp /= segmentLength;
+                                s64 temp = dx; 
+								temp *= info->speed; 
+								temp /= (double)segmentLength;
                                 xSpeed = temp;
-                                temp = dy; temp *= info->speed; temp /= segmentLength;
+								
+                                temp = dy; 
+								temp *= info->speed; 
+								temp /= (double)segmentLength;
                                 ySpeed = temp;
 
                                 // Rotate it 90 deg counterclockwise, and make it into a unit vector
@@ -505,10 +510,11 @@ int whereDoLineSegmentsIntersect(int p1x, int p1y, int p2x, int p2y, int q1x, in
             return -1;
 
         // Fixed-point math, 52.12
-        s64 u = (uNumerator * 0x1000) / denominator;
-        s64 t = (crossProduct(q1x - p1x, q1y - p1y, sx, sy) * 0x1000) / denominator;
+        s64 u = (uNumerator * 0x1000) / (double)denominator;
+        s64 t = (crossProduct(q1x - p1x, q1y - p1y, sx, sy) * 0x1000) / (double)denominator;
+		
         if ((t >= 0) && (t <= 0x1000) && (u >= 0) && (u <= 0x1000))
-            return (t * sqrt64(rx * rx + ry * ry)) / 0x1000;
+            return (t * sqrt64(rx * rx + ry * ry)) / (double)0x1000;
 
         return -1;
     }

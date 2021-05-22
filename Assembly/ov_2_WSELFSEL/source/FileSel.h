@@ -23,6 +23,7 @@ typedef struct
 	int currentmessage;
 	int yesnoselection;
 	int FadeTimer;
+	int ScrollTimer;
 	u8* ENPGPointers[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	SaveFileInfo* SaveFileInfos[3] = {0, 0, 0};
 } FSEL;

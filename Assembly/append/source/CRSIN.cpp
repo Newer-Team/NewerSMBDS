@@ -218,8 +218,8 @@ void CRSIN_Scroll()
         int lerpFracDenominator = SCREEN_SLIDE_IN_DURATION;
         u32 lerpValue1 = SLIDE_IN_LERP_TABLE[lerpIdx];
         u32 lerpValue2 = SLIDE_IN_LERP_TABLE[lerpIdx + 1];
-        s64 lerpValue = (s64)lerpValue1 + ((s64)(lerpValue2 - lerpValue1) * lerpFracNumerator) / lerpFracDenominator;
-        int animPosition = ((256 + TEETH_WIDTH) * (0xFFFFFFFF - lerpValue)) / 0xFFFFFFFF;
+        s64 lerpValue = (s64)lerpValue1 + ((s64)(lerpValue2 - lerpValue1) * lerpFracNumerator) / (double)lerpFracDenominator;
+        int animPosition = ((256 + TEETH_WIDTH) * (0xFFFFFFFF - lerpValue)) / (double)0xFFFFFFFF;
 
         // Old version based on a sine wave:
         //int animPosition = ((256 + TEETH_WIDTH) * (4096 - sinLerp(i * 0x2000 / SCREEN_SLIDE_IN_DURATION))) / 4096;

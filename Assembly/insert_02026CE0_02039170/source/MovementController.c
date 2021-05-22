@@ -601,6 +601,7 @@ u64 PathSize(int pathID)
                 else if (node->yPos > maxY) maxY = node->yPos;
             }
 
-        u64 w64 = (maxX - minX + 15) / 16, h64 = (maxY - minY + 15) / 16;
+        u64 w64 = (maxX - minX + 15) / 16.0;
+		u64 h64 = (maxY - minY + 15) / 16.0;
         return (w64 << 32) | h64;
     }

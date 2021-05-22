@@ -667,19 +667,22 @@ void SetPlayerPosToMinecart(MarioActor* Player)
         // followed by Y (spinning around vert. axis),
         // then Z (spinning around axis into the screen)
         s64 facingScreenAngle;
+		double m_TAD = (double)MINECART_MARIO_TURN_AROUND_DURATION;
+		
+		
         if (!Minecart_global->info.goingBackwards)
             {
                 if (Minecart_global->info.isAirborne)
-                    facingScreenAngle = 0x2800 - (pdmst * 0x5C00) / MINECART_MARIO_TURN_AROUND_DURATION;
+                    facingScreenAngle = 0x2800 - (pdmst * 0x5C00) / m_TAD;
                 else
-                    facingScreenAngle = 0x4000 - (pdmst * 0x8000) / MINECART_MARIO_TURN_AROUND_DURATION;
+                    facingScreenAngle = 0x4000 - (pdmst * 0x8000) / m_TAD;
             }
         else
             {
                 if (Minecart_global->info.isAirborne)
-                    facingScreenAngle = -0x3400 + (pdmst * 0x5C00) / MINECART_MARIO_TURN_AROUND_DURATION;
+                    facingScreenAngle = -0x3400 + (pdmst * 0x5C00) / m_TAD;
                 else
-                    facingScreenAngle = -0x4000 + (pdmst * 0x8000) / MINECART_MARIO_TURN_AROUND_DURATION;
+                    facingScreenAngle = -0x4000 + (pdmst * 0x8000) / m_TAD;
             }
 
         rotateMarioYZ(Player, facingScreenAngle, Minecart_global->rotation.z * 2);

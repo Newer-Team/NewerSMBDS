@@ -253,7 +253,7 @@ void MoveForwards(Titlescreen* tscr)
 		s32 *camX = (s32*)(0x02085BFC);
 		s32 newpos = tscr->XScreenPos - *camX;
 
-		if ((tscr->BoingTimer > 26) && newpos) 
+		if ((tscr->BoingTimer > 25) && newpos) 
 			{
 				tscr->XScreenPos = *camX;
 				for (int j = 0; j < 40; j++)
