@@ -51,11 +51,11 @@ typedef struct
     u16 ViewID;                         // 2BE
     
     u32 unk11[0x13];                    // 2C0
-	
-	Vec3 unkv11;						// 30C
-	Vec3 unkv12;						// 31C
+    
+    Vec3 unkv11;                        // 30C
+    Vec3 unkv12;                        // 31C
 
-	u32 unkm12[0x2];					// 32C
+    u32 unkm12[0x2];                    // 32C
     
     u8 EventFieldID2;                   // 334
     u8 EventFieldID1;                   // 335
@@ -67,15 +67,15 @@ typedef struct
     u32 unused;                         // 340
     
     u32 unk15[0x6];                     // 344
-	
-	Vec3 unkv13;						// 35C
+    
+    Vec3 unkv13;                        // 35C
 
     Vec2 ExistDist;                     // 36C
     Vec2 DrawDist;                      // 378
     Vec2 DeleteDist;                    // 384
     Vec2 Unk3Vec2;                      // 390 vector copied here from ActivePhysics when a collision occurs
-	Vec2 Unk4Vec2;						// 39C
-	
+    Vec2 Unk4Vec2;                      // 39C
+    
     u32  unk16[0x11];                   // 3A8
     u8   unk17;                         // 3EC
     u8   unk18;                         // 3ED
@@ -84,22 +84,22 @@ typedef struct
     u8   unk21;                         // 3F0
     
     // Models
-    ModelAnim3d koopaModel;			    // 3F4
+    ModelAnim3d koopaModel;             // 3F4
     ModelAnim3d copterModel;            // 49C
 
     u32 state;                          // 544
-    u32 action;                         // 548	"sub state"
+    u32 action;                         // 548  "sub state"
 
-	u32 timer;                          // 54C  general-purpose timer
-	u32 timer2;							// 550	2nd general-purpose timer
-	
-	u32 baseline;                       // 554  default y position
-	u32 yPos;							// 558	used for storing the vertical position while bobbing up and down
+    u32 timer;                          // 54C  general-purpose timer
+    u32 timer2;                         // 550  2nd general-purpose timer
+    
+    u32 baseline;                       // 554  default y position
+    u32 yPos;                           // 558  used for storing the vertical position while bobbing up and down
 
-	// Flags
+    // Flags
     u8 updateAnimation;                 // 55C
     u8 playerLookAtBowser;              // 55D  (actually used as a bool)
-	u8 jrState;                         // 55E
+    u8 jrState;                         // 55E
         // The values of jrState are not obvious at all, yet are crucial to
         // understand when debugging certain types of bugs. So here's exactly
         // what every possible value of jrState means, and which sprite (either
@@ -119,85 +119,85 @@ typedef struct
         // FF: dead
         //     This value is set by the FB sprite when the bullets-and-fireballs segment begins
         // (yes, I realize 4 and FF are redundant. Nobody said this code was good.)
-	u8 phase;							// 55F
+    u8 phase;                           // 55F
 
-	u32 battleMinX;						// 560
-	u32 battleMaxX;						// 564
+    u32 battleMinX;                     // 560
+    u32 battleMaxX;                     // 564
 
-	s32 swoopA;							// 568 (fixed-point 4.28)
-	s32 swoopB;							// 56C (fixed-point 4.28)
-	s32 swoopC;							// 570 (integer -- NOT fixed-point)
-	u32 swoopX;							// 574
-	u32 swoopY;							// 578
-	s32 swoopMaxSpeed;					// 57C
-	u32 swoopDirection;					// 580
-	u32 lastVelocityX;
-	u32 mode;
-	u8 swoopOverBLine;
-	u8 liftUp;
-	u8  pad[2];
-	void* bowserJr;
-	
-	u32 actionChangeTime;
-	u32 wigglePosX;
-	u32 timer3;							// yup, we need another one :P
+    s32 swoopA;                         // 568 (fixed-point 4.28)
+    s32 swoopB;                         // 56C (fixed-point 4.28)
+    s32 swoopC;                         // 570 (integer -- NOT fixed-point)
+    u32 swoopX;                         // 574
+    u32 swoopY;                         // 578
+    s32 swoopMaxSpeed;                  // 57C
+    u32 swoopDirection;                 // 580
+    u32 lastVelocityX;
+    u32 mode;
+    u8 swoopOverBLine;
+    u8 liftUp;
+    u8  pad[2];
+    void* bowserJr;
+    
+    u32 actionChangeTime;
+    u32 wigglePosX;
+    u32 timer3;                         // yup, we need another one :P
 
-	u32 camMaxX;
-	u32 killLine;
-	u32 followLine;
-	
-	bool started;
-	bool dead;
+    u32 camMaxX;
+    u32 killLine;
+    u32 followLine;
+    
+    bool started;
+    bool dead;
     u8 copterSoundState;
-	int hitMarioTimer;
-	int endtimer;
+    int hitMarioTimer;
+    int endtimer;
     int musictimer;
-	
-	u32 BGPos1;
-	u32 BGPos2;
-	
-	bool limitbounds;
-	u32 boundsmiddle;
-	
-	MarioActor* Mario;
-	ActivePhysics activephysics2;
+    
+    u32 BGPos1;
+    u32 BGPos2;
+    
+    bool limitbounds;
+    u32 boundsmiddle;
+    
+    MarioActor* Mario;
+    ActivePhysics activephysics2;
 } FinalBoss;
 
 typedef struct
 {
-	u16 x;
-	u16 y;
-	u16 width;
-	u16 height;
-	u8 id;
-	u8 camId;
-	u8 music;
-	u8 unk0;
-	u8 unk1;
-	u8 unk2;
-	u8 lighting;
-	u8 progressPathId;
+    u16 x;
+    u16 y;
+    u16 width;
+    u16 height;
+    u8 id;
+    u8 camId;
+    u8 music;
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 lighting;
+    u8 progressPathId;
 } View;
 
 typedef struct
 {
-	u16 x;
-	u16 y;
-	u16 w;
-	u16 h;
-	u8 id;
-	u8 pad[3];
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+    u8 id;
+    u8 pad[3];
 } Zone;
 
 enum FinalBoss_States
 {
     FinalBoss_Intro = 0,
-	FinalBoss_Swoop = 1,
-	FinalBoss_SpawnBulletBills = 2,
-	FinalBoss_Follow = 3,
-	FinalBoss_SpawnFire = 4,
-	FinalBoss_ChaseIntro = 5,
-	FinalBoss_Stomp = 6
+    FinalBoss_Swoop = 1,
+    FinalBoss_SpawnBulletBills = 2,
+    FinalBoss_Follow = 3,
+    FinalBoss_SpawnFire = 4,
+    FinalBoss_ChaseIntro = 5,
+    FinalBoss_Stomp = 6
 };
 
 void FinalBoss_sideCallback(FinalBoss* fb, MarioActor* ma);

@@ -48,11 +48,11 @@ typedef struct
     u16 ViewID;                         // 2BE
     
     u32 unk11[0x13];                    // 2C0
-	
-	Vec3 unkv11;						// 30C
-	Vec3 unkv12;						// 31C
+    
+    Vec3 unkv11;                        // 30C
+    Vec3 unkv12;                        // 31C
 
-	u32 unkm12[0x2];					// 32C
+    u32 unkm12[0x2];                    // 32C
     
     u8 EventFieldID2;                   // 334
     u8 EventFieldID1;                   // 335
@@ -64,39 +64,39 @@ typedef struct
     u32 state;                          // 340
     
     u32 unk15[0x6];                     // 344
-	
-	Vec3 unkv13;						// 35C
+    
+    Vec3 unkv13;                        // 35C
 
     Vec2 ExistDist;                     // 36C
     Vec2 DrawDist;                      // 378
     Vec2 DeleteDist;                    // 384
     Vec2 Unk3Vec2;                      // 390 vector copied here from ActivePhysics when a collision occurs
-	Vec2 Unk4Vec2;						// 39C
-	
+    Vec2 Unk4Vec2;                      // 39C
+    
     u32  unk16[0x11];                   // 3A8
     u8   unk17;                         // 3EC
     u8   unk18;                         // 3ED
     u8   unk19;                         // 3EE
     u8   unk20;                         // 3EF
     u8   unk21;                         // 3F0
-	
-	// Models
-	ModelAnim3d model;	// 3F4
+    
+    // Models
+    ModelAnim3d model;  // 3F4
 
-	// Textures
-	TexInfo cageFront;	// 49C
-	TexInfo cageBack;	// 4A4
-	
-	Vec3 CagePos;
+    // Textures
+    TexInfo cageFront;  // 49C
+    TexInfo cageBack;   // 4A4
+    
+    Vec3 CagePos;
 
-	u32 timer;			// 4B0
-	MarioActor* Mario;
-	EnemyClassObject* Camera;
-	u32* BottomNSCPtr;
-	
-	int fade;
-	
-	
+    u32 timer;          // 4B0
+    MarioActor* Mario;
+    EnemyClassObject* Camera;
+    u32* BottomNSCPtr;
+    
+    int fade;
+    
+    
 
 } PeachCage;
 

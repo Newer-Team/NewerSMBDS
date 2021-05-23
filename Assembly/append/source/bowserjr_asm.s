@@ -64,20 +64,20 @@ nsub_0213DB18_ov_1C:
 
 @ Only inform Bowser after being damaged
 repl_02140420_ov_1C:
-	ADD     R2, R2, #0x30
-	STMFD   SP!, {R0, R1}
+    ADD     R2, R2, #0x30
+    STMFD   SP!, {R0, R1}
     LDR     R0, [R5,#0x5C4]
     CMP     R0, #0x0
 
     LDMEQFD   SP!, {R0, R1}
-	BXEQ    LR
+    BXEQ    LR
     
     MOV     R0, #0x3
     LDR     R1, [R5, #0x5C8]
     STRB    R0, [R1, #0x55E]
 
     LDMFD   SP!, {R0, R1}
-	BX      LR
+    BX      LR
 
 
 @ You are fucking stupid, Nintendo...
@@ -262,13 +262,13 @@ nsub_021401EC_ov_1C:
     CMP     R0, #0x0
     BEQ     0x021401F0
     B       0x021402A8
-	
+    
 @ Do not start his shitty music
 repl_0213F558_ov_1C:
     LDR     R0, [R4,#0x5C4]
     CMP     R0, #0x0
     BEQ     0x02011F04
-	BXNE    LR
+    BXNE    LR
 
 
 @ (Not related to final boss)

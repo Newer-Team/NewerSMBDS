@@ -17,10 +17,10 @@ typedef struct
 
     u16 topScreenImg;
     u16 subScreenImg;
-	
-	int SecretPressedSelects;
-	
-}   CRSIN;
+    
+    int SecretPressedSelects;
+    
+}CRSIN;
 
 void InitCRSIN();
 void CRSIN_LoadImages();
