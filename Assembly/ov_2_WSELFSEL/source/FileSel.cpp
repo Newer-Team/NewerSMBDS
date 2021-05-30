@@ -117,24 +117,35 @@ void SetSaveInfo(int slot, SaveFileInfo* Info)
  
 void ScrollTopScreenBottomLayer()
     {
-		//WiiU doesn't support scrolling backgrounds this way, so we have to do it manually.
-		ThisFSEL->ScrollTimer++;
-		
-		if (ThisFSEL->ScrollTimer % 5 == 0)
-		{
-			for (int j = 0; j < 255; j++)
-				{
-					u16 leftmost = ((u16*)BG_GFX_SUB)[j * 128];
-					
-					for (int i = 0; i < 127; i++)
-						((u16*)BG_GFX_SUB)[j * 128 + i] = ((u16*)BG_GFX_SUB)[j * 128 + i + 1];
-					
-					((u16*)BG_GFX_SUB)[j * 128 + 127] = leftmost;
-				}
-		}
-		
-	
-        //bgScrollf(7, 32, 0);
+        // Wii U doesn't support scrolling backgrounds with bgScrollf(), so we have to do it manually.
+
+        if (++ThisFSEL->ScrollTimer == 8)
+        {
+            ThisFSEL->ScrollTimer = 0;
+
+            // Only the middle part of the BG needs to scroll
+            for (int j = 27; j < 158; j++)
+                {
+                    // variable to store the byte that moves from each pair to the one prior
+                    u8 saved_top8;
+
+                    // Initialize
+                    u16 first = ((u16*)BG_GFX_SUB)[j * 128];
+                    u8 leftmost = first & 0xFF;
+                    saved_top8 = first >> 8;
+
+                    // Update first 127 pairs
+                    for (int i = 0; i < 127; i++) {
+                        u16 next16 = ((u16*)BG_GFX_SUB)[j * 128 + i + 1];
+                        ((u16*)BG_GFX_SUB)[j * 128 + i] = saved_top8 | (next16 << 8);
+                        saved_top8 = next16 >> 8;
+                    }
+
+                    // Update final pair
+                    ((u16*)BG_GFX_SUB)[j * 128 + 127] = saved_top8 | (leftmost << 8);
+                }
+        }
+
         bgUpdate();
     }
  
