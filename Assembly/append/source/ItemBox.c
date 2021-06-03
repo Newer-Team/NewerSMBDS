@@ -1,4 +1,4 @@
-#sinclude <nds.h>
+#include <nds.h>
 #include "registers.h"
 #include "ItemBox.h"
 #include "game.h"
