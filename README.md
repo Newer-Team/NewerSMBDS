@@ -40,6 +40,8 @@ Download libnds-1.7.2.tar.bz2 and devkitARM_r47-win32.exe from the directories l
 
 ``SETX DEVKITARM47 "[[Extracted devkitARM Path]]"``
 
+Then close your Command Prompt window and re-open it, which allows the changes to take effect.
+
 
 ### Usage
 
