@@ -47,4 +47,4 @@ To start, run the following command:
 
 ``py -3 setup.py "[[NSMB ROM Path]]"``
 
-This will setup the "Assembly" folder. After this, simply run "build.bat" to compile the code.
+This will set up the "Assembly" folder. After this, simply run "build.bat" to compile the code.
