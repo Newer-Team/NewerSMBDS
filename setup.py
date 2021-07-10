@@ -91,7 +91,7 @@ def main():
 
     # A few other things
 
-    (MODULE_PATH / 'Assembly' / 'original' / 'arm7ovt').write_bytes(b'')
+    (MODULE_PATH / 'Assembly' / 'original' / 'arm7ovt.bin').write_bytes(b'')
     shutil.copy(
         MODULE_PATH / 'patches' / 'fnt.bin',
         MODULE_PATH / 'Assembly' / 'original' / 'fnt.bin')
