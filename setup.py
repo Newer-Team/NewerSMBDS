@@ -1,99 +1,111 @@
-import ndspy.rom
-import ndspy.code
-import zlib
-import os
-import sys
+from pathlib import Path
 import shutil
 import subprocess
+import sys
+import zlib
+
+import ndspy.code
+import ndspy.fnt
+import ndspy.rom
 
 
-VALID_ROM_CRC = 26695530
+VALID_ROM_CRC = 0x197576a
+MODULE_PATH = Path(__file__).parent
 
 
-if (len(sys.argv) != 2):
-    print(F'Usage: {sys.argv[0]} <rom path>')
-    sys.exit(1)
+def apply_xdelta(original: Path, delta: Path, out: Path) -> None:
+    """
+    Apply an xdelta3 patch
+    """
+    if sys.platform == 'win32':
+        xdelta_path = MODULE_PATH / 'xdelta3'
+    else:
+        xdelta_path = 'xdelta3'
+
+    subprocess.call([str(xdelta_path), '-d', '-f', '-s', str(original), str(delta), str(out)])
 
 
-rom_path = sys.argv[1]
-
-rom_data = open(rom_path, 'rb').read()
-if (zlib.crc32(rom_data) != VALID_ROM_CRC):
-    print('ROM is invalid!')
-    sys.exit(1)
+def main():
+    if len(sys.argv) != 2:
+        print(f'Usage: {sys.argv[0]} <rom path>')
+        return
 
 
-dst = './original'
+    # Open / check rom
 
-def makedir(path):
-    try:
-        os.mkdir(path)
-    except:
-        pass
+    rom_path = Path(sys.argv[1]).resolve()
 
-
-makedir(dst)
-
-def save(file, start, length):
-    f = open(F'{dst}/{file}', 'wb')
-    f.write(rom_data[start:start+length])
-    f.close()
-
-save('arm7.bin', 0x1FE800, 165536)
-save('arm7ovt.bin', 0, 0)
-save('arm9.bin', 0x4000, 389028)
-save('arm9ovt.bin', 0x62FB0, 4192)
-save('fnt.bin', 0x226EA0, 41554)
-save('header.bin', 0, 512)
-
-makedir(dst + '/overlay7')
-makedir(dst + '/overlay9')
-
-rom = ndspy.rom.NintendoDSRom(rom_data)
-for id, overlay in rom.loadArm9Overlays().items():
-    f = open(F'{dst}/overlay9/overlay9_{id}.bin', 'wb')
-    f.write(overlay.save())
-    f.close()
+    with open(rom_path, 'rb') as f:
+        rom_data = f.read()
+    if zlib.crc32(rom_data) != VALID_ROM_CRC:
+        print('ROM is invalid!')
+        return
 
 
-files = [
-    'arm7.bin',
-    'arm9.bin',
-    'arm9ovt.bin',
-    'header.bin',
-]
+    # Create a temporary "original" folder
 
-files.extend([F'overlay9/overlay9_{i}.bin' for i in range(0, 130+1)])
+    original_path = MODULE_PATH / 'original'
+    original_path.mkdir(exist_ok=True)
 
+    rom = ndspy.rom.NintendoDSRom(rom_data)
+    (original_path / 'arm9.bin').write_bytes(rom.arm9)
+    (original_path / 'arm9ovt.bin').write_bytes(rom.arm9OverlayTable)
+    (original_path / 'arm7.bin').write_bytes(rom.arm7)
+    (original_path / 'arm7ovt.bin').write_bytes(rom.arm7OverlayTable)
+    (original_path / 'fnt.bin').write_bytes(ndspy.fnt.save(rom.filenames))
+    (original_path / 'header.bin').write_bytes(rom_data[:512])
 
-for f in files:
-    if not os.path.isfile('original/' + f):
-        raise
+    (original_path / 'overlay9').mkdir(exist_ok=True)
+    (original_path / 'overlay7').mkdir(exist_ok=True)
 
-
-makedir('Assembly/original/overlay7')
-makedir('Assembly/original/overlay9')
-
-
-def apply_xdelta(original, delta, out):
-    subprocess.call(['xdelta3', '-d', '-f', '-s', original, delta, out])
+    for id, overlay in rom.loadArm9Overlays().items():
+        (original_path / 'overlay9' / f'overlay9_{id}.bin').write_bytes(overlay.data)
 
 
-for f in files:
-    print(f)
+    # Apply xdelta patches to things in the "original" folder
 
-    orig = 'original/' + f
-    delta = 'patches/' + f + '.xdelta3'
-    out = 'Assembly/original/' + f
+    files_to_xdelta_patch = [
+        'arm9.bin',
+        'arm9ovt.bin',
+        'arm7.bin',
+        'header.bin',
+        *(f'overlay9/overlay9_{i}.bin' for i in range(0, 131)),
+    ]
 
-    apply_xdelta(orig, delta, out)
+    for f in files_to_xdelta_patch:
+        if not (original_path / f).is_file():
+            raise RuntimeError(f"File should exist but doesn't: {f}")
+
+    (MODULE_PATH / 'Assembly' / 'original' / 'overlay9').mkdir(exist_ok=True)
+    (MODULE_PATH / 'Assembly' / 'original' / 'overlay7').mkdir(exist_ok=True)
+
+    for f in files_to_xdelta_patch:
+        print(f)
+
+        orig = original_path / f
+        delta = MODULE_PATH / 'patches' / (f + '.xdelta3')
+        out = MODULE_PATH / 'Assembly' / 'original' / f
+
+        apply_xdelta(orig, delta, out)
 
 
-open('Assembly/original/arm7ovt.bin', 'wb').close()
-shutil.copy('patches/fnt.bin', 'Assembly/original/fnt.bin')
+    # A few other things
 
-apply_xdelta(rom_path, 'patches/Newer Super Mario Bros. DS.nds.xdelta3', 'Assembly/Newer Super Mario Bros. DS.nds')
-print('Newer Super Mario Bros. DS.nds')
+    (MODULE_PATH / 'Assembly' / 'original' / 'arm7ovt').write_bytes(b'')
+    shutil.copy(
+        MODULE_PATH / 'patches' / 'fnt.bin',
+        MODULE_PATH / 'Assembly' / 'original' / 'fnt.bin')
+
+    apply_xdelta(
+        rom_path,
+        MODULE_PATH / 'patches' / 'Newer Super Mario Bros. DS.nds.xdelta3',
+        MODULE_PATH / 'Assembly' / 'Newer Super Mario Bros. DS.nds')
+    print('Newer Super Mario Bros. DS.nds')
 
 
-shutil.rmtree('./original', ignore_errors=True)
+    # Delete "original" folder
+
+    shutil.rmtree(original_path, ignore_errors=True)
+
+
+main()
