@@ -20,6 +20,8 @@ Copyright (c) 2015-2017 Skawo, RoadrunnerWMC, RicBent
 
 ### Requirements
 
+Please note: you must use *exactly* the versions of devkitARM and libnds described below. **Newer versions will not work.**
+
 - Python 3
 - ndspy
 - devkitARM version 47 (available here: https://wii.leseratte10.de/devkitPro/devkitARM/r47%20(2017))
@@ -50,3 +52,11 @@ To start, run the following command:
 ``py -3 setup.py "[[NSMB ROM Path]]"``
 
 This will set up the "Assembly" folder. After this, simply run "build.bat" to compile the code.
+
+## Troubleshooting
+
+### Compilation failed, and above that it says "`cannot find -lgcc`"
+
+You probably installed the wrong version of devkitARM. Make sure you're using *exactly* the version described in the "Requirements" section above.
+
+(Technical explanation: Magigoomba's `Makefile` requires a specific version of gcc, but newer devkitARM releases come with different versions of it. The mismatch prevents the libgcc headers from being found.)
