@@ -71,7 +71,9 @@ CFLAGS	:=	-g -Wall -Os\
 CFLAGS	+=	$(INCLUDE) -DARM9 -nodefaultlibs -I. -fno-builtin -c
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
-ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	:=	-g $(ARCH)\
+		-march=armv5te -mtune=arm946e-s
+
 LDFLAGS	=	-T $(CURDIR)/../symbols.x -T $(CURDIR)/../linker.x -g $(ARCH) -Map newcode.map
 
 ifdef CODEADDR
