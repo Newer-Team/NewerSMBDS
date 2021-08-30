@@ -74,15 +74,15 @@ void ItmBoxCollision(ActivePhysics* a, ActivePhysics* b)
     SpawnParticle(62, &itmb->position);
     PlaySNDEffect(SE_PLY_STAR_ATTACK, &itmb->position);
     
-    Vec3 meatballHasATinyWiener;
+    Vec3 sActorpos;
     
-    meatballHasATinyWiener.x = itmb->position.x+itmb->settings->offsetX*0x1000;
-    meatballHasATinyWiener.y = itmb->position.y+itmb->settings->offsetY*0x1000;
-    meatballHasATinyWiener.z = itmb->position.z;
+    sActorpos.x = itmb->position.x+itmb->settings->offsetX*0x1000;
+    sActorpos.y = itmb->position.y+itmb->settings->offsetY*0x1000;
+    sActorpos.z = itmb->position.z;
     
     for (int i = 0; i < (itmb->spriteData & 0xF0) >> 4; i++)
     {
-        u32* spawned = createActor(itmb->settings->classID, itmb->settings->spriteData, &meatballHasATinyWiener, 0, 0, 0);
+        u32* spawned = createActor(itmb->settings->classID, itmb->settings->spriteData, &sActorpos, 0, 0, 0);
         if (mA->xVelocity<=0) 
         {
             *(spawned + 0x34)-=(abs)(mA->xVelocity)+0x200+i*0x600; 
