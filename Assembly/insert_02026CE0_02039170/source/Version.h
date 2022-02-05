@@ -1,1 +1,1 @@
-#define GAME_VERSION "1.15"
+#define GAME_VERSION "1.16"

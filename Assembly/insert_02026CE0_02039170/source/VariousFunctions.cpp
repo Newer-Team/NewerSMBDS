@@ -57,13 +57,11 @@ int CheckForRumblePak()
 		// Otherwise, normal check.
 		else if (!isRumbleInserted())
 			{
-				for (int i = 0; i < 0xFFF; i++)
-					{
-						if (GBA_BUS[i] != 0xFFFD) 
-							{
-								return 0;
-							}
-					}
+				if (GBA_BUS[1] != 0xFFFD)
+				{
+					return 0;
+				}
+							
 				return 2;
 			}
 			
