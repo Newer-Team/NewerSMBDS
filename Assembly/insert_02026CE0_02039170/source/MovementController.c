@@ -330,7 +330,7 @@ void MovementController_PositionStuff(MovementController* mcon)
                 else // Swaying
                     {
                         // Old attempts; resulted in working but unreadable code:
-                        // https://i.imgur.com/BnT5PQI.png  https://i.imgur.com/K9gXdPc.png
+                        // see movement_controller_sway_old_attempt_{1,2}.png
 
                         bool transition = !(mcon->swaystate & 1);
                         bool returning = mcon->swaystate >> 1 & 1;

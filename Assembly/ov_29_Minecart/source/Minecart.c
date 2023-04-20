@@ -500,8 +500,8 @@ void Minecart_CheckTileCollisions(Minecart* cart)
         bool checkHead = (Player_global->marioPowerupState != 4) && (!(pressedKeys & DOWN));
 
         // Define points at which to detect collision
-        // https://i.imgur.com/7alkDEM.png
-        // (beach tileset there is a test level; not some unused/scrapped idea :P)
+        // (see minecart_collision_points.png (beach tileset there is a test
+        // level; not some unused/scrapped idea :P))
         // Units here: 4 = a tile
         int xPositions[] = {2,
                             6,
