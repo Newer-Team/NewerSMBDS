@@ -170,7 +170,7 @@ repl_0214F38C_ov_2A:
 	STRB    R1, [R4,#0x630]
 	LDMFD 	SP!, {R1,PC}     	
 
-# Groundpound
+# Groundpound, fireballs
 nsub_0214E798_ov_2A:
 	LDR     R1, [R0,#8]
 	MOV     R1, R1, LSR#16
@@ -178,9 +178,9 @@ nsub_0214E798_ov_2A:
 	CMP     R1, #1
 	LDRLEB  R2, [R0,#0x2BD]
 	BLE   	0x209D84C
-	LDR     R2, =#0x2000000
+	LDR     R2, =#0x02000000
 	CMP     R4, R2
-	B		.regular
+	BLE	    .regular
 	LDR     R2, =0x630
 	LDRB    R1, [R4,R2]
 	CMP     R1, #0
