@@ -170,6 +170,7 @@ repl_0214F38C_ov_2A:
 	STRB    R1, [R4,#0x630]
 	LDMFD 	SP!, {R1,PC}     	
 
+# Groundpound
 nsub_0214E798_ov_2A:
 	LDR     R1, [R0,#8]
 	MOV     R1, R1, LSR#16
@@ -177,6 +178,9 @@ nsub_0214E798_ov_2A:
 	CMP     R1, #1
 	LDRLEB  R2, [R0,#0x2BD]
 	BLE   	0x209D84C
+	LDR     R2, =#0x2000000
+	CMP     R4, R2
+	B		.regular
 	LDR     R2, =0x630
 	LDRB    R1, [R4,R2]
 	CMP     R1, #0
@@ -191,6 +195,16 @@ nsub_0214E798_ov_2A:
 	BL		PlaySNDEffect
 	LDMFD	SP!, {LR}
 	BX      LR
+	
+# Fix for crashes in water; revert to regular behaviour
+.regular:
+	LDRB    R2, [R0,#0x2BD]
+	LDR     R1, =0x20C4EC8
+	LDR     R12, =0x209D84C
+	MOV     R2, R2,LSL#1
+	LDRSH   R1, [R1,R2]
+	STRH    R1, [R0,#0xA2]
+	BX      R12
 
 .spawn:
 	MOV		R6, R0
