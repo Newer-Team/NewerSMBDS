@@ -38,6 +38,7 @@ u32 *nodesCount = (u32*)(0x0208B160);
 int CheckForRumblePak() 
 	{
 		sysSetCartOwner(BUS_OWNER_ARM9);
+
 		// First, check for 0x96 to see if it's a GBA game
 		if (GBA_HEADER.is96h == 0x96)
 			{
@@ -57,20 +58,23 @@ int CheckForRumblePak()
 		// Otherwise, normal check.
 		else if (!isRumbleInserted())
 			{
-				if (GBA_BUS[1] != 0xFFFD)
-				{
-					return 0;
-				}
-							
-				return 2;
+				int ret = 0;
+				
+				u16* CartCheck = (u16*)0x027ffc30;
+				
+				if (CartCheck[0] == 0xFFFD && CartCheck[1] == 0xFDFF)
+					ret = 2;
+				
+				if (GBA_BUS[1] == 0xFFFD && GBA_BUS[2] == 0xFFFD)
+					ret = 2;
+				
+				return ret;
 			}
-			
 		// Devkitpro Check... 
 		else if (isRumbleInserted())
 		{
 			return 2;
 		}
-		
 		else return 0;
 	}
 
