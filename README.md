@@ -24,8 +24,8 @@ Please note: you must use *exactly* the versions of devkitARM and libnds describ
 
 - Python 3
 - ndspy
-- devkitARM version 47 (available here: https://wii.leseratte10.de/devkitPro/devkitARM/r47%20(2017))
-- libnds version 1.7.2 (available here: https://wii.leseratte10.de/devkitPro/libnds/libnds_1.7.2%20(2018))
+- devkitARM version 47 (available here: https://web.archive.org/web/20241207013909/https://wii.leseratte10.de/devkitPro/devkitARM/r47%20(2017))
+- libnds version 1.7.2 (available here: https://web.archive.org/web/20240409062540/https://wii.leseratte10.de/devkitPro/libnds/libnds_1.7.2%20%282018%29/)
 - A North American New Super Mario Bros. DS rom (md5: a2ddba012e5c3c2096d0be57cc273be5)
 
 ## Installation
